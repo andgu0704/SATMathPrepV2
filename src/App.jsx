@@ -83,9 +83,9 @@ const SATMathWebsite = () => {
       {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'glass py-4' : 'py-6'}`}>
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-          <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+          <a href="#home" className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent cursor-pointer">
             SAT Math Pro
-          </div>
+          </a>
 
           <div className="hidden md:flex gap-8">
             {['მთავარი', 'კურსები', 'ჩვენს შესახებ', 'რეგისტრაცია'].map((item, i) => (
@@ -125,7 +125,7 @@ const SATMathWebsite = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 text-center z-10">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent pb-2">
             SAT Math<br />სრულყოფილი მომზადება
           </h1>
           <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
@@ -162,38 +162,62 @@ const SATMathWebsite = () => {
         </div>
       </section>
 
-      {/* Courses */}
-      <section id="courses" className="py-20 px-4 bg-black/20">
+      {/* Curriculum */}
+      <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 fade-in">ჩვენი კურსები</h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 fade-in">სასწავლო პროგრამა</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { name: 'საწყისი დონე', price: '200₾/თვე', features: ['ძირითადი თემები', '8 გაკვეთილი თვეში', 'პრაქტიკული ტესტები', 'ონლაინ რესურსები'] },
-              { name: 'საშუალო დონე', price: '300₾/თვე', features: ['მოწინავე თემები', '12 გაკვეთილი თვეში', 'უზრუნველყოფილი მასალები', 'პირადი კონსულტაცია'], popular: true },
-              { name: 'ინტენსიური', price: '450₾/თვე', features: ['მთელი პროგრამა', '16 გაკვეთილი თვეში', 'ინდივიდუალური მეთოდები', '24/7 მხარდაჭერა'] }
-            ].map((course, i) => (
-              <div key={i} className={`fade-in glass p-8 rounded-2xl ${course.popular ? 'ring-2 ring-blue-500 scale-105' : ''} hover:scale-105 transition-all duration-300`}>
-                {course.popular && (
-                  <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-1 rounded-full text-sm font-semibold inline-block mb-4">
-                    პოპულარული
-                  </div>
-                )}
-                <h3 className="text-2xl font-bold mb-4">{course.name}</h3>
-                <div className="text-4xl font-bold text-blue-400 mb-6">{course.price}</div>
-                <ul className="space-y-3 mb-8">
-                  {course.features.map((feature, j) => (
+              { title: 'ალგებრა', topics: ['წრფივი განტოლებები', 'ფუნქციები', 'უთანასწორობები'] },
+              { title: 'გეომეტრია', topics: ['სამკუთხედები', 'წრეწირები', 'მოცულობები'] },
+              { title: 'მონაცემები', topics: ['ალბათობა', 'სტატისტიკა', 'გრაფიკები'] },
+              { title: 'რთული მათემატიკა', topics: ['კვადრატული', 'პოლინომები', 'ტრიგონომეტრია'] }
+            ].map((item, i) => (
+              <div key={i} className="fade-in glass p-6 rounded-2xl hover:bg-white/5 transition-all duration-300 border-l-4 border-blue-500">
+                <h3 className="text-xl font-bold mb-4">{item.title}</h3>
+                <ul className="space-y-2 text-gray-400">
+                  {item.topics.map((t, j) => (
                     <li key={j} className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-green-400" />
-                      <span className="text-gray-300">{feature}</span>
+                      <div className="w-1.5 h-1.5 rounded-full bg-cyan-400"></div>
+                      <span>{t}</span>
                     </li>
                   ))}
                 </ul>
-                <a href="#register" className="block w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full text-center font-semibold hover:shadow-xl transition-all duration-300">
-                  აირჩიე კურსი
-                </a>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Courses */}
+      <section id="courses" className="py-20 px-4 bg-black/20">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 fade-in">სწავლის პირობები</h2>
+
+          <div className="max-w-lg mx-auto">
+            <div className="fade-in glass p-8 rounded-2xl ring-2 ring-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.2)]">
+              <div className="text-center mb-8">
+                <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-2 rounded-full text-sm font-semibold inline-block mb-6">
+                  სრული კურსი
+                </div>
+                <h3 className="text-3xl font-bold mb-4">SAT Math Masterclass</h3>
+                <div className="text-5xl font-bold text-blue-400">350₾<span className="text-xl text-gray-400 font-normal">/თვე</span></div>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {['ონლაინ ვიდეო კურსები', 'ყოველკვირეული ლაივ შეხვედრა', '24/7 კითხვა-პასუხი', 'პირადი კონსულტაციები', 'პრაქტიკული სავარჯიშოები', 'საგამოცდო სტრატეგიები'].map((feature, j) => (
+                  <li key={j} className="flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                      <Check className="w-4 h-4" />
+                    </div>
+                    <span className="text-gray-300">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              <a href="#register" className="block w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl text-center font-bold text-lg hover:shadow-lg hover:shadow-blue-500/25 hover:scale-[1.02] transition-all duration-300">
+                დარეგისტრირდი
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -203,9 +227,9 @@ const SATMathWebsite = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="fade-in">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">რატომ ჩვენ?</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">რატომ მე?</h2>
               <p className="text-gray-300 text-lg mb-6">
-                ჩვენ ვართ SAT Math მომზადების სპეციალისტები 8+ წლიანი გამოცდილებით. ჩვენი პროგრამა აერთიანებს თანამედროვე სწავლების მეთოდებს და ინდივიდუალურ მიდგომას.
+                ვარ SAT Math-ის გამოცდილი ინსტრუქტორი. ჩემი პროგრამა აერთიანებს თანამედროვე სწავლების მეთოდებს და ინდივიდუალურ მიდგომას თითოეული მოსწავლისადმი.
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
@@ -213,8 +237,8 @@ const SATMathWebsite = () => {
                     <Award className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="font-bold mb-1">სერტიფიცირებული პედაგოგები</h3>
-                    <p className="text-gray-400">ყველა ინსტრუქტორი გადის რეგულარულ ტრენინგს</p>
+                    <h3 className="font-bold mb-1">სერტიფიცირებული პედაგოგი</h3>
+                    <p className="text-gray-400">მუდმივი პროფესიული განვითარება</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -223,7 +247,7 @@ const SATMathWebsite = () => {
                   </div>
                   <div>
                     <h3 className="font-bold mb-1">დამტკიცებული შედეგები</h3>
-                    <p className="text-gray-400">ჩვენი სტუდენტები აღწევენ საშუალოდ 750+ ქულას</p>
+                    <p className="text-gray-400">სტუდენტები აღწევენ საშუალოდ 750+ ქულას</p>
                   </div>
                 </div>
               </div>
@@ -247,83 +271,101 @@ const SATMathWebsite = () => {
         <div className="max-w-3xl mx-auto">
           <div className="fade-in text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">დარეგისტრირდი ახლავე</h2>
-            <p className="text-gray-300 text-lg">შეავსე ფორმა და ჩვენ დაგიკავშირდებით 24 საათში</p>
+            <p className="text-gray-300 text-lg">შეავსე ქვემოთ მოცემული ფორმა</p>
           </div>
 
           <div className="fade-in glass p-8 rounded-2xl space-y-6">
-            <div>
-              <label className="block text-sm font-semibold mb-2">სახელი და გვარი *</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="თქვენი სახელი"
-              />
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="relative">
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all peer placeholder-transparent"
+                  placeholder="სახელი"
+                  id="name"
+                />
+                <label htmlFor="name" className="absolute left-4 top-3 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-6 peer-focus:text-blue-400 peer-focus:text-xs -top-6 text-xs">
+                  სახელი და გვარი *
+                </label>
+              </div>
+
+              <div className="relative">
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all peer placeholder-transparent"
+                  placeholder="ტელეფონი"
+                  id="phone"
+                />
+                <label htmlFor="phone" className="absolute left-4 top-3 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-6 peer-focus:text-blue-400 peer-focus:text-xs -top-6 text-xs">
+                  ტელეფონი *
+                </label>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold mb-2">ელ. ფოსტა *</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="example@mail.com"
-              />
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="relative">
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all peer placeholder-transparent"
+                  placeholder="ელ. ფოსტა"
+                  id="email"
+                />
+                <label htmlFor="email" className="absolute left-4 top-3 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-6 peer-focus:text-blue-400 peer-focus:text-xs -top-6 text-xs">
+                  ელ. ფოსტა *
+                </label>
+              </div>
+
+              <div className="relative">
+                <select
+                  name="level"
+                  value={formData.level}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-gray-300 appearance-none"
+                >
+                  <option value="" className="bg-slate-900">აირჩიე დონე</option>
+                  <option value="beginner" className="bg-slate-900">საწყისი</option>
+                  <option value="intermediate" className="bg-slate-900">საშუალო</option>
+                  <option value="advanced" className="bg-slate-900">მაღალი</option>
+                </select>
+                <div className="absolute right-4 top-3.5 pointer-events-none text-gray-400">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold mb-2">ტელეფონი *</label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="+995 555 123 456"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-2">დონე *</label>
-              <select
-                name="level"
-                value={formData.level}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">აირჩიე დონე</option>
-                <option value="beginner">საწყისი</option>
-                <option value="intermediate">საშუალო</option>
-                <option value="advanced">მაღალი</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-2">დამატებითი ინფორმაცია</label>
+            <div className="relative">
               <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                rows="4"
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="მოგვიყევით თქვენი მიზნების შესახებ..."
+                rows="3"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all peer placeholder-transparent"
+                placeholder="შეტყობინება"
+                id="message"
               ></textarea>
+              <label htmlFor="message" className="absolute left-4 top-3 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-6 peer-focus:text-blue-400 peer-focus:text-xs -top-6 text-xs">
+                დამატებითი ინფორმაცია
+              </label>
             </div>
 
             <button
               onClick={handleSubmit}
-              className="w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg font-semibold hover:shadow-xl hover:scale-105 transition-all duration-300"
+              className="w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-blue-500/25 hover:scale-[1.02] transition-all duration-300 transform"
             >
-              გაგზავნა
+              შერჩევა და გაგზავნა
             </button>
 
             {submitted && (
-              <div className="text-center text-green-400 font-semibold">
-                ✓ მესიჯი გაიგზავნა წარმატებით!
+              <div className="text-center bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-green-400 font-semibold animate-fade-in">
+                ✓ მესიჯი წარმატებით გაიგზავნა!
               </div>
             )}
           </div>
