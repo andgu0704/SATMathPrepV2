@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, BookOpen, TrendingUp, Users, Award, Mail, Phone, MapPin, Check } from 'lucide-react';
+import { Menu, X, BookOpen, TrendingUp, Users, Award, Mail, Phone, MapPin, Check, Facebook } from 'lucide-react';
 
 const SATMathWebsite = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,10 +18,23 @@ const SATMathWebsite = () => {
   const heroRef = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Show/hide based on scroll direction
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false); // Scrolling down
+      } else {
+        setIsVisible(true); // Scrolling up
+      }
+
+      setScrolled(currentScrollY > 50);
+      setLastScrollY(currentScrollY);
+    };
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -36,17 +52,41 @@ const SATMathWebsite = () => {
     return () => observer.disconnect();
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.name || !formData.email || !formData.phone || !formData.level) {
       alert('გთხოვთ შეავსოთ ყველა სავალდებულო ველი');
       return;
     }
 
-    const mailtoLink = `mailto:your-email@example.com?subject=SAT Math Registration - ${formData.name}&body=სახელი: ${formData.name}%0D%0Aელ.ფოსტა: ${formData.email}%0D%0Aტელეფონი: ${formData.phone}%0D%0Aდონე: ${formData.level}%0D%0Aშეტყობინება: ${formData.message}`;
+    try {
+      // Use Web3Forms to send email
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: "YOUR_ACCESS_KEY_HERE", // User needs to replace this
+          subject: `SAT Math Registration - ${formData.name}`,
+          from_name: "SAT Math Pro Website",
+          to_email: "eloavalishvili@gmail.com",
+          ...formData
+        })
+      });
 
-    window.location.href = mailtoLink;
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+      const result = await response.json();
+      if (result.success) {
+        setSubmitted(true);
+        setFormData({ name: '', email: '', phone: '', level: '', message: '' });
+        setTimeout(() => setSubmitted(false), 5000);
+      } else {
+        alert('დაფიქსირდა შეცდომა. გთხოვთ სცადოთ მოგვიანებით.');
+      }
+    } catch (error) {
+      alert('დაფიქსირდა შეცდომა. გთხოვთ სცადოთ მოგვიანებით.');
+      console.error(error);
+    }
   };
 
   const handleChange = (e) => {
@@ -81,10 +121,11 @@ const SATMathWebsite = () => {
       `}</style>
 
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'glass py-4' : 'py-6'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-300 transform ${isVisible ? 'translate-y-0' : '-translate-y-full'
+        } ${scrolled ? 'glass py-4' : 'py-6'}`}>
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
           <a href="#home" className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent cursor-pointer">
-            SAT Math Pro
+            SAT Math Prep
           </a>
 
           <div className="hidden md:flex gap-8">
@@ -94,6 +135,12 @@ const SATMathWebsite = () => {
                 {item}
               </a>
             ))}
+            <button
+              onClick={() => setContactModalOpen(true)}
+              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors font-semibold"
+            >
+              კონტაქტი
+            </button>
           </div>
 
           <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden">
@@ -110,9 +157,55 @@ const SATMathWebsite = () => {
                 {item}
               </a>
             ))}
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                setContactModalOpen(true);
+              }}
+              className="block w-full text-left bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 px-4 py-2 rounded-lg transition-colors mt-4"
+            >
+              კონტაქტი
+            </button>
           </div>
         )}
       </nav>
+
+      {/* Contact Modal */}
+      {contactModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl p-8 max-w-md w-full relative shadow-2xl shadow-blue-500/20">
+            <button
+              onClick={() => setContactModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+            >
+              <X />
+            </button>
+            <h3 className="text-2xl font-bold mb-6 text-center">დაგვიკავშირდით</h3>
+
+            <div className="space-y-4">
+              <a href="https://www.facebook.com/groups/821847867528197/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/20 rounded-xl transition-all group">
+                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Facebook className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <div className="font-bold text-blue-100">Facebook ჯგუფი</div>
+                  <div className="text-sm text-blue-300">შემოუერთდი ჩვენს ჯგუფს</div>
+                </div>
+              </a>
+
+              <a href="tel:+995551613200" className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all group">
+                <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Phone className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <div className="font-bold text-gray-100">დაგვირეკეთ</div>
+                  <div className="text-sm text-gray-400">+995 551 613 200</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section id="home" ref={heroRef} className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
@@ -151,11 +244,10 @@ const SATMathWebsite = () => {
               { icon: Users, title: 'ინდივიდუალური მიდგომა', desc: 'პერსონალური სასწავლო გეგმა' },
               { icon: TrendingUp, title: 'სწრაფი პროგრესი', desc: 'შედეგი 2-3 თვეში' },
               { icon: Award, title: 'გარანტირებული წარმატება', desc: '95%+ სტუდენტებს აქვთ 700+ ქულა' }
-            ].map((feature, i) => (
-              <div key={i} className="fade-in glass p-6 rounded-2xl glow-card transition-all duration-300">
-                <feature.icon className="w-12 h-12 text-blue-400 mb-4" />
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                <p className="text-gray-400">{feature.desc}</p>
+            ].map((item, i) => (
+              <div key={i} className="fade-in bg-slate-900/90 p-6 rounded-2xl hover:bg-slate-800 transition-all duration-300 border border-blue-500/30 shadow-lg shadow-blue-500/10 hover:shadow-blue-500/30">
+                <h3 className="text-xl font-bold mb-4 text-blue-100">{item.title}</h3>
+                <p className="text-gray-400">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -171,10 +263,10 @@ const SATMathWebsite = () => {
               { title: 'ალგებრა', topics: ['წრფივი განტოლებები', 'ფუნქციები', 'უთანასწორობები'] },
               { title: 'გეომეტრია', topics: ['სამკუთხედები', 'წრეწირები', 'მოცულობები'] },
               { title: 'მონაცემები', topics: ['ალბათობა', 'სტატისტიკა', 'გრაფიკები'] },
-              { title: 'რთული მათემატიკა', topics: ['კვადრატული', 'პოლინომები', 'ტრიგონომეტრია'] }
+              { title: 'უმაღლესი მათემატიკა', topics: ['კვადრატული', 'პოლინომები', 'ტრიგონომეტრია'] }
             ].map((item, i) => (
-              <div key={i} className="fade-in glass p-6 rounded-2xl hover:bg-white/5 transition-all duration-300 border-l-4 border-blue-500">
-                <h3 className="text-xl font-bold mb-4">{item.title}</h3>
+              <div key={i} className="fade-in bg-slate-900/90 p-6 rounded-2xl hover:bg-slate-800 transition-all duration-300 border border-blue-500/30 shadow-lg shadow-blue-500/10 hover:shadow-blue-500/30">
+                <h3 className="text-xl font-bold mb-4 text-blue-100">{item.title}</h3>
                 <ul className="space-y-2 text-gray-400">
                   {item.topics.map((t, j) => (
                     <li key={j} className="flex items-center gap-2">
@@ -200,7 +292,7 @@ const SATMathWebsite = () => {
                 <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-2 rounded-full text-sm font-semibold inline-block mb-6">
                   სრული კურსი
                 </div>
-                <h3 className="text-3xl font-bold mb-4">SAT Math Masterclass</h3>
+                <h3 className="text-3xl font-bold mb-4">SAT Math Course</h3>
                 <div className="text-5xl font-bold text-blue-400">350₾<span className="text-xl text-gray-400 font-normal">/თვე</span></div>
               </div>
 
@@ -227,9 +319,9 @@ const SATMathWebsite = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="fade-in">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">რატომ მე?</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">რატომ ჩვენთან?</h2>
               <p className="text-gray-300 text-lg mb-6">
-                ვარ SAT Math-ის გამოცდილი ინსტრუქტორი. ჩემი პროგრამა აერთიანებს თანამედროვე სწავლების მეთოდებს და ინდივიდუალურ მიდგომას თითოეული მოსწავლისადმი.
+                ჩვენი პროგრამა აერთიანებს თანამედროვე სწავლების მეთოდებს და ინდივიდუალურ მიდგომას თითოეული მოსწავლისადმი.
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
@@ -276,84 +368,79 @@ const SATMathWebsite = () => {
 
           <div className="fade-in glass p-8 rounded-2xl space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="relative">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-300">სახელი და გვარი *</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all peer placeholder-transparent"
-                  placeholder="სახელი"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-gray-500"
+                  placeholder="თქვენი სახელი"
                   id="name"
                 />
-                <label htmlFor="name" className="absolute left-4 top-3 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-6 peer-focus:text-blue-400 peer-focus:text-xs -top-6 text-xs">
-                  სახელი და გვარი *
-                </label>
               </div>
 
-              <div className="relative">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-300">ტელეფონი *</label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all peer placeholder-transparent"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-gray-500"
                   placeholder="ტელეფონი"
                   id="phone"
                 />
-                <label htmlFor="phone" className="absolute left-4 top-3 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-6 peer-focus:text-blue-400 peer-focus:text-xs -top-6 text-xs">
-                  ტელეფონი *
-                </label>
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="relative">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-300">ელ. ფოსტა *</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all peer placeholder-transparent"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-gray-500"
                   placeholder="ელ. ფოსტა"
                   id="email"
                 />
-                <label htmlFor="email" className="absolute left-4 top-3 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-6 peer-focus:text-blue-400 peer-focus:text-xs -top-6 text-xs">
-                  ელ. ფოსტა *
-                </label>
               </div>
 
-              <div className="relative">
-                <select
-                  name="level"
-                  value={formData.level}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-gray-300 appearance-none"
-                >
-                  <option value="" className="bg-slate-900">აირჩიე დონე</option>
-                  <option value="beginner" className="bg-slate-900">საწყისი</option>
-                  <option value="intermediate" className="bg-slate-900">საშუალო</option>
-                  <option value="advanced" className="bg-slate-900">მაღალი</option>
-                </select>
-                <div className="absolute right-4 top-3.5 pointer-events-none text-gray-400">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-300">დონე *</label>
+                <div className="relative">
+                  <select
+                    name="level"
+                    value={formData.level}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-gray-300 appearance-none"
+                  >
+                    <option value="" className="bg-slate-900">აირჩიე დონე</option>
+                    <option value="beginner" className="bg-slate-900">საწყისი</option>
+                    <option value="intermediate" className="bg-slate-900">საშუალო</option>
+                    <option value="advanced" className="bg-slate-900">მაღალი</option>
+                  </select>
+                  <div className="absolute right-4 top-3.5 pointer-events-none text-gray-400">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="relative">
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-gray-300">დამატებითი ინფორმაცია</label>
               <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
                 rows="3"
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all peer placeholder-transparent"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-gray-500"
                 placeholder="შეტყობინება"
                 id="message"
               ></textarea>
-              <label htmlFor="message" className="absolute left-4 top-3 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-6 peer-focus:text-blue-400 peer-focus:text-xs -top-6 text-xs">
-                დამატებითი ინფორმაცია
-              </label>
             </div>
 
             <button
@@ -378,7 +465,7 @@ const SATMathWebsite = () => {
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
               <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-                SAT Math Pro
+                SAT Math Prep
               </h3>
               <p className="text-gray-400">
                 შენი წარმატება SAT-ში იწყება აქ
@@ -390,11 +477,11 @@ const SATMathWebsite = () => {
               <div className="space-y-2 text-gray-400">
                 <div className="flex items-center gap-2">
                   <Mail className="w-5 h-5" />
-                  <span>info@satmathpro.ge</span>
+                  <span>eloavalishvili@gmail.com</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="w-5 h-5" />
-                  <span>+995 555 123 456</span>
+                  <span>+995 551 613 200</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="w-5 h-5" />
@@ -417,7 +504,7 @@ const SATMathWebsite = () => {
           </div>
 
           <div className="text-center text-gray-500 pt-8 border-t border-white/10">
-            © 2026 SAT Math Pro. ყველა უფლება დაცულია.
+            © 2026 SAT Math Prep. ყველა უფლება დაცულია.
           </div>
         </div>
       </footer>
